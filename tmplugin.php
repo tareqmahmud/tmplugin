@@ -70,7 +70,7 @@ final class TMPlugin {
 		define( 'TMPLUGIN_VERSION', self::version );
 		define( 'TMPLUGIN_FILE', __FILE__ );
 		define( 'TMPLUGIN_PATH', __DIR__ );
-		define( 'TMPLUGIN_URL', plugin_dir_url( TMPLUGIN_FILE ) );
+		define( 'TMPLUGIN_URL', plugins_url( '', TMPLUGIN_FILE ) );
 		define( 'TMPLUGIN_ASSETS', TMPLUGIN_URL . '/assets' );
 	}
 
@@ -80,14 +80,8 @@ final class TMPlugin {
 	 * @return void
 	 */
 	public function activate() {
-		// Add plugin version to the database
-		update_option( 'tmplugin_version', TMPLUGIN_VERSION );
-
-		// Add time to the db when the plugin is installed
-		$installed = get_option( 'tmplugin_installed' );
-		if ( ! $installed ) {
-			update_option( 'tmplugin_installed', time() );
-		}
+		$installer = new TMPlugin\Installer();
+		$installer->run();
 	}
 
 	/**
@@ -96,6 +90,14 @@ final class TMPlugin {
 	 * @return void
 	 */
 	public function init_plugin() {
+		// Load assets for both frontend and backend
+		new TMPlugin\Assets();
+
+		// Call Ajax Request
+		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+			new TMPlugin\Ajax();
+		}
+
 		if ( is_admin() ) {
 			new TMPlugin\Admin();
 		} else {

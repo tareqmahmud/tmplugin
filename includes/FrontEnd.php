@@ -2,7 +2,7 @@
 
 namespace TMPlugin;
 
-use TMPlugin\FrontEnd\Shortcode;
+use TMPlugin\FrontEnd\Shortcode\Enquiry;
 
 class FrontEnd {
 
@@ -11,6 +11,12 @@ class FrontEnd {
 	 */
 	public function __construct() {
 		// Call all the frontend class
-		new Shortcode();
+		new Enquiry();
+
+		add_action( 'wp_enqueue_scripts', [ $this, 'load_all_the_frontend_assets' ] );
+	}
+
+	public function load_all_the_frontend_assets() {
+		wp_enqueue_style( 'bootstrap-css' );
 	}
 }
